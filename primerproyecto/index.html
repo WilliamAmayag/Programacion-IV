@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Primer Proyecto Progra IV - A2</title>
+</head>
+<body>
+    <h1>Hola Mundo</h1>
+
+    <div id="app">
+
+        <h2> suma con view</h2>
+    <label for="txtNum1">Numero 1: </label>
+    <input type="" id='txtNum1' v-model='num1'>
+    <label for="txtNum2">Numero 2: </label>
+    <input type="" id='txtNum2' v-model='num2'>
+    
+<button v-on:click='sumar'>Sumar</button>
+<button v-on:click='restar'>Restar</button>
+<button v-on:click='multiplicar'>Multiplicar</button>
+<button v-on:click='dividir'>Dividir</button>
+
+resultado : {{num1}} {{operacion}} {{num2}} = {{resultado}}
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        const app =  new Vue({
+            el: '#app',
+               data: {
+              num1: '',
+                num2: '',
+                operacion: '',
+            resultado: '',
+            },
+            methods: {
+                sumar(){
+                    this.resultado = parseFloat(this.num1) + parseFloat(this.num2);
+                        this.operacion = '+';
+                },
+                restar(){
+                    this.resultado = parseFloat(this.num1) - parseFloat(this.num2);
+                        this.operacion = '-';
+                },
+                multiplicar(){
+                    this.resultado = parseFloat(this.num1) * parseFloat(this.num2);
+                        this.operacion = '*';
+                },
+                dividir(){
+                    this.resultado = parseFloat(this.num1) / parseFloat(this.num2);
+                        this.operacion = '/';
+                },
+            }
+        });
+    </script>
+</body>
+</html>
