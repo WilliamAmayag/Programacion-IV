@@ -58,6 +58,8 @@
                                     type="text" class="form-control">
                             </div>
                         </div>
+
+
                         <div class="row">
                             <div class="col col-md-5 text-center">
                                 <div v-if="cliente.mostrar_msg" class="alert alert-primary alert-dismissible fade show"
@@ -68,6 +70,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row m-2">
                             <div class="col col-md-5 text-center">
                                 <input class="btn btn-success" type="submit" value="Guardar">
@@ -77,6 +80,8 @@
                     </form>
                 </div>
             </div>
+
+
             <div class="card text-white" id="carBuscarCliente">
                 <div class="card-header bg-primary">
                     Busqueda de Clientes
@@ -101,6 +106,7 @@
                                 <th>DUI</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <tr v-for="cliente in clientes" :key="cliente.idCliente">
                                 <td>{{cliente.codigo}}</td>
@@ -120,6 +126,7 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    
     <script>
         const db_sistema = openDatabase('db_sistema', '1.0', 'Sistema', 5 * 1024 * 1024);
         if (!db_sistema) {
