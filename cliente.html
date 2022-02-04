@@ -1,76 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administracion de Clientes</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
-
 <body>
     <div class="appSistema" id="appSistema">
         <div class="container-fluid">
             <div class="card text-white" id="carCliente">
-              
-                <div class="card-header bg-primary">Registro de Clientes
-                    <button type="button" class="btn-close text-end" data-bs-dismiss="alert"
-                        data-bs-target="#carCliente" aria-label="Close"></button>
-                </div>
+                <div class="card-header bg-primary">
+                    Registro de Clientes
 
+                    <button type="button" class="btn-close text-end" data-bs-dismiss="alert" data-bs-target="#carCliente" aria-label="Close"></button>
+                </div>
                 <div class="card-body text-dark">
                     <form method="post" @submit.prevent="guardarCliente" @reset="nuevoCliente">
                         <div class="row">
                             <div class="col col-md-2">Codigo:</div>
                             <div class="col col-md-2">
-                                <input title="Ingrese el codigo" v-model="cliente.codigo" pattern="[0-9]{3,10}" required
-                                    type="text" class="form-control">
+                                <input title="Ingrese el codigo" v-model="cliente.codigo" pattern="[0-9]{3,10}" required type="text" class="form-control">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-md-2">Nombre:</div>
                             <div class="col col-md-3">
-                                <input title="Ingrese el nombre" v-model="cliente.nombre"
-                                    pattern="[A-Za-zñÑáéíóúü ]{3,75}" required type="text" class="form-control">
+                                <input title="Ingrese el nombre" v-model="cliente.nombre" pattern="[A-Za-zñÑáéíóúü ]{3,75}" required type="text" class="form-control">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-md-2">Direccion:</div>
                             <div class="col col-md-3">
-                                <input title="Ingrese la direccion" v-model="cliente.direccion"
-                                    pattern="[A-Za-zñÑáéíóúü ]{3,100}" required type="text" class="form-control">
+                                <input title="Ingrese la direccion" v-model="cliente.direccion" pattern="[A-Za-zñÑáéíóúü ]{3,100}" required type="text" class="form-control">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-md-2">Telefono:</div>
                             <div class="col col-md-2">
-                                <input title="Ingrese el tel" v-model="cliente.telefono" pattern="[0-9]{4}-[0-9]{4}"
-                                    required type="text" class="form-control">
+                                <input title="Ingrese el tel" v-model="cliente.telefono" pattern="[0-9]{4}-[0-9]{4}" required type="text" class="form-control">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col col-md-2">DUI:</div>
                             <div class="col col-md-2">
-                                <input title="Ingrese el DUI" v-model="cliente.dui" pattern="[0-9]{8}-[0-9]{1}" required
-                                    type="text" class="form-control">
+                                <input title="Ingrese el DUI" v-model="cliente.dui" pattern="[0-9]{8}-[0-9]{1}" required type="text" class="form-control">
                             </div>
                         </div>
-
-
                         <div class="row">
                             <div class="col col-md-5 text-center">
-                                <div v-if="cliente.mostrar_msg" class="alert alert-primary alert-dismissible fade show"
-                                    role="alert">
+                                <div v-if="cliente.mostrar_msg" class="alert alert-primary alert-dismissible fade show" role="alert">
                                     {{ cliente.msg }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             </div>
                         </div>
-
                         <div class="row m-2">
                             <div class="col col-md-5 text-center">
                                 <input class="btn btn-success" type="submit" value="Guardar">
@@ -80,22 +68,18 @@
                     </form>
                 </div>
             </div>
-
-
             <div class="card text-white" id="carBuscarCliente">
                 <div class="card-header bg-primary">
                     Busqueda de Clientes
 
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" data-bs-target="#carBuscarCliente"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" data-bs-target="#carBuscarCliente" aria-label="Close"></button>
                 </div>
                 <div class="card-body">
                     <table class="table table-dark table-hover">
                         <thead>
                             <tr>
                                 <th colspan="5">
-                                    Buscar: <input @keyup="buscandoCliente" v-model="buscar" placeholder="buscar aqui"
-                                        class="form-control" type="text">
+                                    Buscar: <input @keyup="buscandoCliente" v-model="buscar" placeholder="buscar aqui" class="form-control" type="text" >
                                 </th>
                             </tr>
                             <tr>
@@ -104,16 +88,19 @@
                                 <th>DIRECCION</th>
                                 <th>TEL</th>
                                 <th>DUI</th>
+                                <th></th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            <tr v-for="cliente in clientes" :key="cliente.idCliente">
+                            <tr v-for="cliente in clientes" @click="modificarCliente(cliente)" :key="cliente.idCliente">
                                 <td>{{cliente.codigo}}</td>
                                 <td>{{cliente.nombre}}</td>
                                 <td>{{cliente.direccion}}</td>
                                 <td>{{cliente.telefono}}</td>
                                 <td>{{cliente.dui}}</td>
+                                <td>
+                                    <button class="btn btn-danger" @click="eliminarCliente(cliente)">Eliminar</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -121,26 +108,24 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script>
         const db_sistema = openDatabase('db_sistema', '1.0', 'Sistema', 5 * 1024 * 1024);
-        if (!db_sistema) {
+        if( !db_sistema ){
             alert('Lo siento, el navagador no soporta BD offline');
         }
         var app = new Vue({
             el: '#appSistema',
-            data: {
-                buscar: '',
-                clientes: [],
-                cliente: {
-                    accion: 'nuevo',
-                    mostrar_msg: false,
-                    msg: '',
+            data:{
+                buscar:'',
+                clientes:[],
+                cliente:{
+                    accion : 'nuevo',
+                    mostrar_msg : false,
+                    msg : '',
                     codigo: '',
                     nombre: '',
                     direccion: '',
@@ -148,47 +133,68 @@
                     dui: ''
                 }
             },
-            methods: {
-                buscandoCliente() {
+            methods:{
+                buscandoCliente(){
+                    //console.log(this.buscar);
                     this.clientes.filter(cliente => {
-                        if (cliente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1) {
+                        if(cliente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase()) > -1){
                             return cliente;
                         }
                     });
                 },
-                guardarCliente(e) {
-                    if (this.cliente.accion == "nuevo") {
-                        db_sistema.transaction(tx => {
-                            tx.executeSql(
-                                'INSERT INTO clientes (codigo, nombre, direccion, telefono, dui) VALUES (?,?,?,?,?)',
-                                [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion,
-                                    this.cliente.telefono, this.cliente.dui
-                                ],
-                                (tx, res) => {
-                                    this.nuevoCliente();
-                                    this.obtenerClientes();
-                                    this.cliente.mostrar_msg = true;
-                                    this.cliente.msg = 'Cliente guardado con exito';
-                                },
-                                (tx, err) => {
-                                    this.cliente.mostrar_msg = true;
-                                    this.cliente.msg =
-                                    `Error al guardar el cliente: ${err.message}`;
-                                });
-                        });
+                eliminarCliente(cliente){
+                    if( confirm(`Esta seguro de eliminar el cliente ${cliente.nombre}?`) ){
+                        this.cliente.idCliente = cliente.idCliente;
+                        this.cliente.accion = 'eliminar';
+                        this.guardarCliente();
                     }
                 },
-                obtenerClientes() {
-                    db_sistema.transaction(tx => {
-                        tx.executeSql('SELECT * FROM clientes', [], (index, datos) => {
+                modificarCliente(cliente){
+                    this.cliente = cliente;
+                    this.cliente.accion = 'modificar';
+                },
+                guardarCliente(){
+                    let sql = '',
+                        parametros = [];
+                    if(this.cliente.accion=="nuevo"){
+                        sql = 'INSERT INTO clientes (codigo, nombre, direccion, telefono, dui) VALUES (?,?,?,?,?)';
+                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
+                            this.cliente.telefono, this.cliente.dui];
+                    } else if(this.cliente.accion=="modificar"){
+                        sql = 'UPDATE clientes SET codigo=?, nombre=?, direccion=?, telefono=?, dui=? WHERE idCliente=?';
+                        parametros = [this.cliente.codigo, this.cliente.nombre, this.cliente.direccion, 
+                            this.cliente.telefono, this.cliente.dui, this.cliente.idCliente];
+                    } else if(this.cliente.accion=="eliminar"){
+                        sql = 'DELETE FROM clientes WHERE idCliente=?';
+                        parametros = [this.cliente.idCliente];
+                    }
+                    db_sistema.transaction(tx=>{
+                            tx.executeSql(sql,
+                            parametros,
+                            (tx, res)=>{
+                                this.nuevoCliente();
+                                this.obtenerClientes();
+                                this.cliente.mostrar_msg = true;
+                                this.cliente.msg = 'Cliente procesado con exito';
+                            },
+                            (tx, err)=>{
+                                this.cliente.mostrar_msg = true;
+                                this.cliente.msg = `Error al guardar el cliente: ${err.message}`;
+                            });
+                        });
+                },
+                obtenerClientes(){
+                    db_sistema.transaction(tx=>{
+                        tx.executeSql('SELECT * FROM clientes', [], (index, datos)=>{
+                            //this.clientes = datos.rows;
                             this.clientes = [];
-                            for (let i = 0; i < datos.rows.length; i++) {
+                            for(let i=0; i<datos.rows.length; i++){
                                 this.clientes.push(datos.rows[i]);
                             }
                         });
                     });
                 },
-                nuevoCliente() {
+                nuevoCliente(){
                     this.cliente.accion = 'nuevo';
                     this.cliente.msg = '';
                     this.cliente.codigo = '';
@@ -198,12 +204,10 @@
                     this.cliente.dui = '';
                 }
             },
-            created() {
-                db_sistema.transaction(tx => {
-                    tx.executeSql(
-                        'CREATE TABLE IF NOT EXISTS clientes(idCliente INTEGER PRIMARY KEY AUTOINCREMENT, codigo char(10), nombre char(100), direccion TEXT, telefono TEXT, dui TEXT)'
-                        );
-                }, err => {
+            created(){
+                db_sistema.transaction(tx=>{
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS clientes(idCliente INTEGER PRIMARY KEY AUTOINCREMENT, codigo char(10), nombre char(100), direccion TEXT, telefono TEXT, dui TEXT)');
+                }, err=>{
                     console.log(err);
                 });
                 this.obtenerClientes();
