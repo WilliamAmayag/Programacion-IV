@@ -72,7 +72,7 @@ Vue.component('estudiantes', {
         },
         obtenerEstudiantes(word) {
             db_sistema.transaction(tx => {
-                tx.executeSql(`SELECT * FROM estudiantes WHERE name LIKE '%${word}%' OR lastname LIKE '%${word}%'`, [], (tx, res) => {
+                tx.executeSql(`SELECT * FROM estudiantes WHERE name LIKE '%${word}%' OR lastname LIKE '%${word}%' OR dui LIKE '%${word}%' `, [], (tx, res) => {
                         this.students = [];
                         for (let i = 0; i < res.rows.length; i++) {
                             this.students.push(res.rows.item(i));
@@ -84,6 +84,7 @@ Vue.component('estudiantes', {
                     });
             });
         }
+
     },
            
     created(){
