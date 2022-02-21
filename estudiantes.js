@@ -71,17 +71,21 @@ Vue.component('estudiantes', {
             this.student.accion = 'modificar';
         },
         obtenerEstudiantes(word) {
-            let respuesta = db_sistema.transaction(tx => {
-                tx.executeSql(`SELECT * FROM estudiantes WHERE code LIKE "%${word}%" OR name LIKE "%${word}%" OR lastname LIKE "%${word}%" OR birth LIKE "%${word}%" OR phone LIKE "%${word}%" OR email LIKE "%${word}%" OR address LIKE "%${word}%" OR dui LIKE "%${word}%"`, [], (tx, res) => {
-                    this.students = [];
-                    for (let i = 0; i < res.rows.length; i++) {
-                        this.students.push(res.rows.item(i));
-                    }
-                });
+            db_sistema.transaction(tx => {
+                tx.executeSql(`SELECT * FROM estudiantes WHERE name LIKE '%${word}%' OR lastname LIKE '%${word}%'`, [], (tx, res) => {
+                        this.students = [];
+                        for (let i = 0; i < res.rows.length; i++) {
+                            this.students.push(res.rows.item(i));
+                        }
+                    },
+                    (tx, err) => {
+                        alert('Error al obtener los estudiantes', err.message);
+                        console.log(err);
+                    });
             });
-
-        },
+        }
     },
+           
     created(){
         db_sistema.transaction(tx => {
             tx.executeSql(

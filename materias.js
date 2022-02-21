@@ -61,17 +61,20 @@ Vue.component('materias', {
             this.materia.accion = 'modificar';
         },
         obtener(word) {
-            let respuesta = db_sistema.transaction(tx => {
-                tx.executeSql(`SELECT * FROM materias WHERE name LIKE "%${word}%" OR teacher LIKE "%${word}%" OR room LIKE "%${word}%"`, [], (tx, res) => {
+            db_sistema.transaction(tx => {
+                tx.executeSql(`SELECT * FROM materias WHERE name LIKE '%${word}%'`, [], (tx, res) => {
                     this.materias = [];
                     for (let i = 0; i < res.rows.length; i++) {
                         this.materias.push(res.rows.item(i));
                     }
+                }, (tx, err) => {
+                    alert('Error al obtener materias', err.message);
+                    console.log(err);
                 });
             });
-
-        },
+        }
     },
+           
     created() {
         db_sistema.transaction(tx => {
             tx.executeSql(
