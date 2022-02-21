@@ -145,8 +145,9 @@ Vue.component('materias', {
                 
 
                                 <th>Materia</th>
-                                <th>Profesor</th>
+                                <th>maestro</th>
                                 <th>Salon</th>
+                                
                             
                                 <th></th>
                             </tr>
