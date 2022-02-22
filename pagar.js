@@ -79,6 +79,8 @@ Vue.component('pagar', {
             let pagares = JSON.parse(localStorage.getItem('pagares')) || [];
             this.pagares = pagares.filter(pagar => pagar.cliente['label'].toLowerCase().indexOf(busqueda.toLowerCase())>-1 );
 
+
+            
             this.clientes = [];
             let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
             this.clientes = clientes.map(cliente => {
@@ -144,7 +146,7 @@ Vue.component('pagar', {
                     <div class="row p-1">
                         <div class="col col-md-2">Pago:</div>
                         <div class="col col-md-3">
-                            <input title="Ingrese el dia" v-model="pagar.pago"  required type="text" class="form-control">
+                            <input title="Ingrese el dia" v-model="pagar.pago"  type="text" class="form-control">
                         </div>
                     </div>
                     
