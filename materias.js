@@ -1,165 +1,154 @@
 Vue.component('materias', {
     data:()=>{
         return {
-            word: '',
             materias: [],
-            days: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
+            buscar: '',
             materia: {
-                accion: "nuevo",
-                name: '',
-                teacher: '',
-                room: '',
-               
+                accion: 'nuevo',
+                msg : '',
+                idMateria: '',
+                codigo: '',
+                nombre: '',
+                docente: '',
+                salon: '',
             }
         }
     },
     methods: {
-        buscar() {
-            this.obtener(this.word);
+        buscarMateria(){
+            this.obtenerDatos(this.buscar);
         },
-        limpiar() {
-            this.materia.name = '';
-            this.materia.teacher = '';
-            this.materia.room = '';
-            this.materia.accion = 'nuevo';
-        },
-        guardar() {
-            let sql = '';
-            parametros = [];
-
-            if (this.materia.accion == 'nuevo') {
-                sql = 'INSERT INTO materias (name, teacher, room) VALUES (?,?,?)';
-                parametros = [this.materia.name, this.materia.teacher, this.materia.room];
-               } else if (this.materia.accion == 'modificar') {
-                sql = 'UPDATE materias SET name = ?, teacher = ?, room = ? WHERE idMateria = ?';
-                parametros = [this.materia.name, this.materia.teacher, this.materia.room, this.materia.idMateria];
-                } else if (this.materia.accion == 'eliminar') {
-                sql = 'DELETE FROM materias WHERE idMateria = ?';
-                parametros = [this.materia.idMateria];
+        guardarMateria(){
+            this.obtenerDatos();
+            let materias = this.materias || [];
+            if( this.materia.accion == 'nuevo' ){
+                this.materia.idMateria = idUnicoFecha();
+                materias.push(this.materia);
+            }else if( this.materia.accion == 'modificar' ){
+                let index = materias.findIndex(materia=>materia.idMateria==this.materia.idMateria);
+                materias[index] = this.materia;
+            }else if( this.materia.accion == 'eliminar' ){
+                let index = materias.findIndex(materia=>materia.idMateria==this.materia.idMateria);
+                materias.splice(index,1);
             }
-            db_sistema.transaction(tx => {
-                tx.executeSql(sql, parametros, (tx, res) => {
-                        this.limpiar();
-                        this.obtener('');
-                        alert('Registro procesado');
-                    },
-                    (tx, err) => {
-                        alert('Error al procesar materias', err.message);
-                        console.log(err);
-                    });
-            });
+            localStorage.setItem('materias', JSON.stringify(materias));
+            this.materia.msg = 'Materia procesado con exito';
+            this.nuevoMateria();
+            this.obtenerDatos();
         },
-        eliminar(materia) {
-            if (confirm(`Esta seguro de eliminar la materia ${materia.name}?`)) {
-                this.materia.idMateria = materia.idMateria;
-                this.materia.accion = 'eliminar';
-                this.guardar();
-            }
-        },
-        modificar(materia) {
-            this.materia = JSON.parse(JSON.stringify(materia));
+        modificarMateria(data){
+            this.materia = JSON.parse(JSON.stringify(data));
             this.materia.accion = 'modificar';
         },
-        obtener(word) {
-            db_sistema.transaction(tx => {
-                tx.executeSql(`SELECT * FROM materias WHERE name LIKE '%${word}%'`, [], (tx, res) => {
-                    this.materias = [];
-                    for (let i = 0; i < res.rows.length; i++) {
-                        this.materias.push(res.rows.item(i));
+        eliminarMateria(data){
+            if( confirm(`¿Esta seguro de eliminar el materia ${data.nombre}?`) ){
+                this.materia.idMateria = data.idMateria;
+                this.materia.accion = 'eliminar';
+                this.guardarMateria();
+            }
+        },
+        obtenerDatos(busqueda=''){
+            this.materias = [];
+            if( localStorage.getItem('materias')!=null ){
+                for(let i=0; i<JSON.parse(localStorage.getItem('materias')).length; i++){
+                    let data = JSON.parse(localStorage.getItem('materias'))[i];
+                    if( this.buscar.length>0 ){
+                        if( data.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 ){
+                            this.materias.push(data);
+                        }
+                    }else{
+                        this.materias.push(data);
                     }
-                }, (tx, err) => {
-                    alert('Error al obtener materias', err.message);
-                    console.log(err);
-                });
-            });
+                }
+            }
+        },
+        nuevoMateria(){
+            this.materia.accion = 'nuevo';
+            this.materia.idMateria = '';
+            this.materia.codigo = '';
+            this.materia.docente = '';
+            this.materia.nombre = '';
+            this.materia.salon = '';
+            this.materia.msg = '';
         }
+    }, 
+    created(){
+        this.obtenerDatos();
     },
-           
-    created() {
-        db_sistema.transaction(tx => {
-            tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Materias(idMateria INTEGER PRIMARY KEY AUTOINCREMENT, name char(100), teacher char(100), room char(100))'
-            );
-        }, err => {
-            console.log(err);
-        });
-        this.obtener('');
-    },
-
     template: `
-        <div id='appMaterias'>
-            <form @submit.prevent="guardar" @reset.prevent="limpiar" method="post" id="frmMaterias">
+        <div id='appMateria'>
+            <form @submit.prevent="guardarMateria" @reset.prevent="nuevoMateria" method="post" id="frmMateria">
                 <div class="card mb-3">
                     <div class="card-header text-white bg-dark">
-                        Administracion de materias
-                        <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#frmMaterias" aria-label="Close"></button>
+                        Administracion de Materias
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#frmMateria" aria-label="Close"></button>
                     </div>
                     <div class="card-body">
-                        <div class="row p-1">
-                            <div class="col col-md-1">Materia</div>
-                            <div class="col col-md-2">
-                                <input v-model="materia.name" placeholder="materia" required title="nomvbre de materia" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="row p-1">
-                            <div class="col col-md-1">Maestro</div>
-                            <div class="col col-md-2">
-                                <input v-model="materia.teacher" placeholder="maestro" required title="Nombre de estudiante" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="row p-1">
-                        <div class="col col-md-1">Salon</div>
-                        <div class="col col-md-2">
-                            <input v-model="materia.room" placeholder="apellido"  required title="apellido de estudiante" class="form-control" type="text">
-                        </div>
+                    <div class="row p-1">
+                    <div class="col col-md-1">Codigo</div>
+                    <div class="col col-md-2">
+                        <input v-model="materia.codigo" placeholder="codigo" required title="Codigo de materia" class="form-control" type="text">
                     </div>
-                 
-
-
-                    
-                        
+                </div>
+                <div class="row p-1">
+                    <div class="col col-md-1">Nombre</div>
+                    <div class="col col-md-2">
+                        <input v-model="materia.nombre" placeholder="nombre" pattern="[A-Za-zÑñáéíóú ]{3,75}" required title="Nombre de materia" class="form-control" type="text">
+                    </div>
+                </div>
+               
+            <div class="row p-1">
+                    <div class="col col-md-1">Docente</div>
+                    <div class="col col-md-2">
+                        <input v-model="materia.docente" placeholder="docente" required title="telefono de materia" class="form-control" type="text">
+                    </div>
+                </div>
+                <div class="row p-1">
+                    <div class="col col-md-1">Salon</div>
+                    <div class="col col-md-2">
+                        <input v-model="materia.salon" placeholder="salon"  required title="Correo de materia" class="form-control" type="text">
+                    </div>
+                </div>
+            
                         <div class="row">
                             <div class="col col-md-3 text-center">
                                 <button type="submit" class="btn btn-primary">Guardar</button>
-                                <button type="reset" class="btn btn-warning">Limpiar</button>
+                                <button type="reset" class="btn btn-warning">Nuevo</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <div class="card mb-3" id="cardBuscarMaterias">
+            <div class="card mb-3" id="cardBuscarMateria">
                 <div class="card-header text-white bg-dark">
-                    Busqueda de materias
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarMaterias" aria-label="Close"></button>
+                    Busqueda de Materias
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarMateria" aria-label="Close"></button>
                 </div>
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table table-dark table-hover">
                         <thead>
                             <tr>
-                                <td colspan="6">
-                                buscar: <input title="Introduzca el texto a buscar" @keyup="buscar" v-model="word" class="form-control" type="text">
+                                <td colspan="7">
+                                    Buscar: <input title="Introduzca el texto a buscar" @keyup="buscarMateria" v-model="buscar" class="form-control" type="text">
                                 </td>
                             </tr>
                             <tr>
-
-                
-
-                                <th>Materia</th>
-                                <th>maestro</th>
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Docente</th>
                                 <th>Salon</th>
-                                
                             
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in materias" :key="item.idMateria" @click="modificar(item)">
-                                <td>{{item.name}}</td>
-                                <td>{{item.teacher}}</td>
-                                <td>{{item.room}}</td>
-                              
+                            <tr v-for="item in materias" :key="item.idMateria" @click="modificarMateria(item)">
+                                <td>{{item.codigo}}</td>
+                                <td>{{item.nombre}}</td>
+                                <td>{{item.docente}}</td>
+                                <td>{{item.salon}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger" @click="eliminar(item)">Eliminar</button>
+                                    <button type="button" class="btn btn-danger" @click="eliminarMateria(item)">Eliminar</button>
                                 </td>
                             </tr>
                         </tbody>

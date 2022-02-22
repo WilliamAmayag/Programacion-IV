@@ -1,3 +1,8 @@
+var idUnicoFecha = ()=>{
+    let fecha = new Date();
+    return Math.floor(fecha.getTime()/1000).toString(16);
+};
+
 var app = new Vue({
     el: '#appSistema',
     data: {
